@@ -1,0 +1,68 @@
+mysql> use person;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> CREATE INDEX myindex1 ON Users (email);
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> CREATE INDEX myindex2 ON Users (username, password);
+Query OK, 0 rows affected (0.06 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SHOW INDEX FROM Users;
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Users |          0 | PRIMARY  |            1 | user_id     | A         |           4 |     NULL | NULL   |      | BTREE      |         |               |
+| Users |          1 | myindex1 |            1 | email       | A         |           4 |     NULL | NULL   | YES  | BTREE      |         |               |
+| Users |          1 | myindex2 |            1 | username    | A         |           4 |     NULL | NULL   | YES  | BTREE      |         |               |
+| Users |          1 | myindex2 |            2 | password    | A         |           4 |     NULL | NULL   | YES  | BTREE      |         |               |
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+4 rows in set (0.00 sec)
+
+mysql> DROP INDEX myindex1 ON Users;
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DROP INDEX myindex2 ON Users;
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SHOW INDEX FROM Users;
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Users |          0 | PRIMARY  |            1 | user_id     | A         |           4 |     NULL | NULL   |      | BTREE      |         |               |
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+1 row in set (0.00 sec)
+
+mysql> quit;
+
+5 .  Implicit Indexes are automatically created by the database server whereas
+     Unique Indexes are created by the Users. Implicit indexes are created on
+     those attributes which are either primary keys or have a ‘UNIQUE’ constraint
+     applied on them. Unique Indexes prevents duplication of entries in a column           
+     and unlike Implicit Indexes, Unique Indexes are not necessarily created on 
+     primary keys, rather they can be created on any attribute.
+
+NoSQL (MongoDB) Indexes:
+
+1- Indexes are important because they improve the speed and efficiency of search operations in database. Instead of searching the whole document, the search is performed on the indexes that holds only few fields.
+
+Use Case: Let’s suppose there are 20,000 rows in a table called ‘Users’ and an attribute called ‘user_no’ is indexed than the following query will examine only two rows instead of 20,000.
+select Salary from Users where user_no in (102,103);
+
+2- Yes, there is a difference  between commands of dropping an index in
+MySQL versus MongoDB.
+
+In MySQL : DROP INDEX <indexname> <tablename>;
+For example: DROP INDEX myindex1 Users;
+The DROP INDEX command simply takes the index name that we want to delete and the table name with which that index is associated.
+
+In MongoDB: db.<collection>.dropIndex(<Index Name / Field Name>)
+For example: db.studentgrades.dropIndex("student name index")
+The dropIndex() method simply takes the index name that we want to delete. Also, we need to specify the collection to which that index belongs.
+
+3- The following code represents an array of documents that hold index information for the collection ‘studentgrades’. Index information includes the keys and options used to create the index. Since there are two documents in the array, so this means there are two indexes in the collection, namely ‘_id’ index which is the default index and ‘student name index’ which is the user created index. The ‘:1’ means that the field values in the index are created in ascending order.
